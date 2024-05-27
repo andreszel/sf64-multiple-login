@@ -1,3 +1,25 @@
+framework:
+    rate_limiter:
+        # define 2 rate limiters (one for username+IP, the other for IP)
+        username_ip_login:
+            policy: token_bucket
+            limit: 5
+            rate: { interval: '5 minutes' }
+
+        ip_login:
+            policy: sliding_window
+            limit: 50
+            interval: '15 minutes'
+services:
+    # our custom login rate limiter
+    app.login_rate_limiter:
+        class: Symfony\Component\Security\Http\RateLimiter\DefaultLoginRateLimiter
+        arguments:
+            # globalFactory is the limiter for IP
+            $globalFactory: '@limiter.ip_login'
+            # localFactory is the limiter for username+IP
+            $localFactory: '@limiter.username_ip_login'
+            $secret: '%kernel.secret%'
 security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
@@ -24,12 +46,26 @@ security:
                 path: app_logout
                 # where to redirect after logout
                 # target: app_any_route
+            json_login:
+                # api_login is a route we will create below
+                check_path: api_login
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
+            # by default, the feature allows 5 login attempts per minute
+            login_throttling: null
+
+            # configure the maximum login attempts
+            login_throttling:
+                max_attempts: 3          # per minute ...
+                # interval: '15 minutes' # ... or in a custom period
+
+            # use a custom rate limiter via its service ID
+            login_throttling:
+                limiter: app.my_login_rate_limiter
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
