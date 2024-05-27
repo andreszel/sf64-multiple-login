@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Controller\Owner;
+namespace App\Controller\Admin;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/admin', name: 'app_owner_')]
 class DashboardController extends AbstractController
 {
-    #[Route('/owner/dashboard', name: 'app_owner_dashboard')]
+    #[Route('/dashboard', name: 'dashboard')]
     public function index(): Response
     {
-        return $this->render('owner/dashboard/index.html.twig', [
+        return $this->render('admin/dashboard/index.html.twig', [
             'controller_name' => 'DashboardController',
         ]);
     }
