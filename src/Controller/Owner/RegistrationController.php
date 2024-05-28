@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Controller\Admin\Security;
+namespace App\Controller\Owner;
 
 use App\Entity\User;
-use App\Form\Admin\RegistrationFormType;
+use App\Form\Owner\RegistrationFormType;
 use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -15,7 +15,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
-#[Route('/admin', name: 'app_admin_')]
+#[Route(name: 'app_', host: 'gymsystem.test')]
 class RegistrationController extends AbstractController
 {
     public function __construct(private EmailVerifier $emailVerifier)
@@ -42,20 +42,20 @@ class RegistrationController extends AbstractController
             $entityManager->flush();
 
             // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('app_admin_verify_email', $user,
+            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
                     ->from(new Address('mailing@domain.com', 'Notification'))
                     ->to($user->getEmail())
                     ->subject('Please Confirm your Email')
-                    ->htmlTemplate('admin/registration/confirmation_email.html.twig')
+                    ->htmlTemplate('frontend_owner/registration/confirmation_email.html.twig')
             );
 
             // do anything else you need here, like send an email
 
-            return $this->redirectToRoute('app_admin_dashboard');
+            return $this->redirectToRoute('app_owner_dashboard');
         }
 
-        return $this->render('admin/registration/register.html.twig', [
+        return $this->render('frontend_owner/registration/register.html.twig', [
             'registrationForm' => $form,
         ]);
     }
@@ -71,12 +71,12 @@ class RegistrationController extends AbstractController
         } catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('verify_email_error', $exception->getReason());
 
-            return $this->redirectToRoute('app_admin_register');
+            return $this->redirectToRoute('app_register');
         }
 
         // @TODO Change the redirect on success and handle or remove the flash message in your templates
         $this->addFlash('success', 'Your email address has been verified.');
 
-        return $this->redirectToRoute('app_admin_register');
+        return $this->redirectToRoute('app_register');
     }
 }

@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-#[Route(path: '/client', name: 'app_client_')]
+#[Route(name: 'app_client_', host: 'greenfit.test')]
 class SecurityController extends AbstractController
 {
     #[Route(path: '/login', name: 'login')]

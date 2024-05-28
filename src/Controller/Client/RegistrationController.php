@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Client\Security;
+namespace App\Controller\Client;
 
 use App\Entity\User;
 use App\Form\Client\RegistrationFormType;
@@ -15,7 +15,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
-#[Route('/client', name: 'app_client_')]
+#[Route(name: 'app_client_', host: 'greenfit.test')]
 class RegistrationController extends AbstractController
 {
     public function __construct(private EmailVerifier $emailVerifier)
@@ -47,7 +47,7 @@ class RegistrationController extends AbstractController
                     ->from(new Address('mailing@domain.com', 'Notification'))
                     ->to($user->getEmail())
                     ->subject('Please Confirm your Email')
-                    ->htmlTemplate('client/registration/confirmation_email.html.twig')
+                    ->htmlTemplate('frontend_client/registration/confirmation_email.html.twig')
             );
 
             // do anything else you need here, like send an email
@@ -55,7 +55,7 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_client_dashboard');
         }
 
-        return $this->render('client/registration/register.html.twig', [
+        return $this->render('frontend_client/registration/register.html.twig', [
             'registrationForm' => $form,
         ]);
     }

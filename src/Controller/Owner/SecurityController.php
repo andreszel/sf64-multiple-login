@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\Owner;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-#[Route(path: '/admin', name: 'app_admin_')]
+#[Route(name: 'app_', host: 'gymsystem.test')]
 class SecurityController extends AbstractController
 {
     #[Route(path: '/login', name: 'login')]
@@ -19,7 +19,7 @@ class SecurityController extends AbstractController
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('admin/security/login.html.twig', [
+        return $this->render('owner/security/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error,
         ]);

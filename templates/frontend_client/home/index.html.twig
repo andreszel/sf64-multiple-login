@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+    Homepage - frontend Client!
+
+    <p>Formularz logowania: <a href="{{ path('app_client_login') }}">pokaż</a></p>
+    <p>Formularz rejestracji: <a href="{{ path('app_client_register') }}">pokaż</a></p>
+{% endblock %}

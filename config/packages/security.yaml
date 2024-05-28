@@ -5,7 +5,11 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         # used to reload user from session & other features (e.g. switch_user)
-        app_user_provider:
+        app_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+        app_client_provider:
             entity:
                 class: App\Entity\User
                 property: email
@@ -15,13 +19,15 @@ security:
             security: false
         main:
             lazy: true
-            provider: app_user_provider
+            entry_point: App\Security\LoginClientAuthenticator
+            provider: app_client_provider
+            custom_authenticator: App\Security\LoginClientAuthenticator
             form_login:
-                login_path: app_login
-                check_path: app_login
+                login_path: app_client_login
+                check_path: app_client_login
                 enable_csrf: true
             logout:
-                path: app_logout
+                path: app_client_logout
                 # where to redirect after logout
                 # target: app_any_route
             json_login:
@@ -39,16 +45,35 @@ security:
                 max_attempts: 3          # per minute ...
                 interval: '15 minutes' # ... or in a custom period
 
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
+                # by default, the feature is enabled by checking a checkbox in the
+                # login form, uncomment the following line to always enable it.
+                #always_remember_me: true
+        client:
+            pattern: ^/owner
+            lazy: true
+            entry_point: App\Security\LoginOwnerAuthenticator
+            provider: app_provider
+            custom_authenticator: App\Security\LoginOwnerAuthenticator
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
+            logout:
+                path: app_logout
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/admin/login, roles: PUBLIC_ACCESS }
-        - { path: ^/client/login, roles: PUBLIC_ACCESS }
+        - { path: ^/login, roles: PUBLIC_ACCESS, host: gymsystem.test }
+        - { path: ^/login, roles: PUBLIC_ACCESS, host: greenfit.test }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/admin/users, roles: ROLE_SUPER_ADMIN }
-        - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/client, roles: ROLE_CLIENT }
-        - { path: ^/api, roles: [IS_AUTHENTICATED_FULLY, ROLE_API] }
+        - { path: ^/owner/users, roles: ROLE_SUPER_OWNER, host: gymsystem.test }
+        - { path: ^/owner, roles: ROLE_OWNER, host: gymsystem.test }
+        - { path: ^/manage-panel, roles: ROLE_CLIENT, host: greenfit.test }
+        - { path: ^/api, roles: [IS_AUTHENTICATED_FULLY, ROLE_API], host: apigymsystem.test }
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:
